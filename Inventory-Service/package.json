@@ -2,11 +2,15 @@
   "name": "inventory-service",
   "version": "1.0.0",
   "description": "",
-  "main":"src/server.ts",
+  "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.ts",
-    "dev": "nodemon --exec tsx src/server.ts"
+    "dev": "nodemon --exec tsx src/server.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "build": "tsc",
+    "fix:all": "npm run format",
+    "check:all": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +22,13 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "pg": "^8.23.0",
+    "reflect-metadata": "^0.2.2",
     "typeorm": "^1.1.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^22.20.2",
+    "prettier": "^3.9.6",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }
