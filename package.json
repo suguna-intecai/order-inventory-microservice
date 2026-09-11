@@ -1,0 +1,9 @@
+{
+  "name": "order-inventory-microservice",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "fix:all": "npm --prefix Inventory-Service run format && npm --prefix Order-Service run format",
+    "check:all": "npm --prefix Inventory-Service run build && npm --prefix Order-Service run build"
+  }
+}
