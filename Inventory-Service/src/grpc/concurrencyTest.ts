@@ -30,9 +30,8 @@ const client = new inventoryProto.inventory.InventoryService(
   credentials.createInsecure()
 );
 
-// ========================================
+
 // RESERVE STOCK FUNCTION
-// ========================================
 
 const reserveStock = (
   productId: number,
@@ -56,14 +55,10 @@ const reserveStock = (
   });
 };
 
-// ========================================
-// CONCURRENCY TEST
-// ========================================
+
 
 const runConcurrencyTest = async () => {
-  console.log("\n====================================");
-  console.log("       CONCURRENCY TEST");
-  console.log("====================================\n");
+  console.log("CONCURRENCY TEST");
 
   console.log("Initial stock: 10");
   console.log("Customer A wants: 7");
@@ -71,7 +66,7 @@ const runConcurrencyTest = async () => {
   console.log("Total requested: 14");
 
   console.log(
-    "\nBoth requests are being sent at the SAME TIME...\n"
+    "Both requests are being sent at the SAME TIME"
   );
 
   // Send both requests at the same time
@@ -83,14 +78,8 @@ const runConcurrencyTest = async () => {
     requestB,
   ]);
 
-  // ========================================
-  // DISPLAY RESULTS
-  // ========================================
 
-  console.log("====================================");
-  console.log("             RESULTS");
-  console.log("====================================\n");
-
+  console.log("RESULTS");
   results.forEach((result, index) => {
     const customer =
       index === 0 ? "Customer A" : "Customer B";
@@ -110,20 +99,12 @@ const runConcurrencyTest = async () => {
     }
   });
 
-  // ========================================
-  // EXPECTED RESULT
-  // ========================================
-
-  console.log("====================================");
-  console.log("         EXPECTED RESULT");
-  console.log("====================================");
-
+ 
+  console.log(" EXPECTED RESULT");
   console.log("✓ One customer should succeed");
   console.log("✓ One customer should fail");
   console.log("✓ Final stock should be 3");
   console.log("✓ Stock must NEVER become negative");
-
-  console.log("====================================\n");
 
   process.exit(0);
 };
