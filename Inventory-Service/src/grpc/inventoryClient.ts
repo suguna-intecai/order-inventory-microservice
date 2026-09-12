@@ -25,16 +25,129 @@ const client = new inventoryProto.inventory.InventoryService(
   credentials.createInsecure(),
 );
 
-client.GetInventory(
+// client.GetInventory(
+//   {
+//     productId: 1,
+//   },
+//   (error: any, response: any) => {
+//     if (error) {
+//       console.error("gRPC Error:", error.message);
+//       return;
+//     }
+
+//     console.log("GetInventory Response:", response);
+//   },
+// );
+
+
+// client.CheckStock(
+//   {
+//     productId: 1,
+//     quantity: 5
+//   },
+//   (error: any, response: any) => {
+//     if (error) {
+//       console.error("CheckStock Error:", error);
+//       return;
+//     }
+
+//     console.log("CheckStock Response:", response);
+//   }
+// );
+
+
+
+client.CheckStock(
   {
     productId: 1,
+    quantity: 3
   },
   (error: any, response: any) => {
+
     if (error) {
-      console.error("gRPC Error:", error.message);
+      console.error(
+        "CheckStock Error:",
+        error.message
+      );
       return;
     }
 
-    console.log("GetInventory Response:", response);
+    console.log("\n===== CHECK STOCK =====");
+
+    console.log(response);
+  }
+);
+
+
+// ========================================
+// 2. RESERVE STOCK
+// ========================================
+
+client.ReserveStock(
+  {
+    productId: 1,
+    quantity: 2
   },
+  (error: any, response: any) => {
+
+    if (error) {
+      console.error(
+        "ReserveStock Error:",
+        error.message
+      );
+      return;
+    }
+
+    console.log("\n===== RESERVE STOCK =====");
+
+    console.log(response);
+  }
+);
+
+
+// ========================================
+// 3. RELEASE STOCK
+// ========================================
+
+client.ReleaseStock(
+  {
+    productId: 1,
+    quantity: 1
+  },
+  (error: any, response: any) => {
+
+    if (error) {
+      console.error(
+        "ReleaseStock Error:",
+        error.message
+      );
+      return;
+    }
+
+    console.log("\n===== RELEASE STOCK =====");
+
+    console.log(response);
+  }
+);
+
+
+client.ReserveStock(
+  {
+    productId: 1,
+    quantity: 10
+  },
+  (error: any, response: any) => {
+
+    if (error) {
+      console.error(
+        "ReserveStock Error:"
+      );
+
+      console.error(error.message);
+
+      return;
+    }
+
+    console.log(response);
+  }
 );
