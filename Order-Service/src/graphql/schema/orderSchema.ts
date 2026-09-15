@@ -1,3 +1,5 @@
+
+
 export const typeDefs = `#graphql
 
   enum OrderStatus {
@@ -38,6 +40,20 @@ export const typeDefs = `#graphql
     items: [CreateOrderItemInput!]!
   }
 
+  input UpdateOrderInput {
+    userId: ID
+  }
+
+  input CreateUserInput {
+    name: String!
+    email: String!
+  }
+
+  input UpdateUserInput {
+    name: String
+    email: String
+  }
+
   type OrderConnection {
     orders: [Order!]!
     page: Int!
@@ -48,26 +64,27 @@ export const typeDefs = `#graphql
 
   type Query {
     getOrder(id: ID!): Order
-
     getUserOrders(
       userId: ID!
       page: Int
       limit: Int
     ): OrderConnection!
+
+    getUser(id: ID!): User
   }
 
   type Mutation {
-    createOrder(
-      input: CreateOrderInput!
-    ): Order!
+    # Order operations
+    createOrder(input: CreateOrderInput!): Order!
+    updateOrder(id: ID!, input: UpdateOrderInput!): Order!
+    deleteOrder(id: ID!): Boolean!
 
-    cancelOrder(
-      id: ID!
-    ): Order!
+    cancelOrder(id: ID!): Order!
+    updateOrderStatus(id: ID!, status: OrderStatus!): Order!
 
-    updateOrderStatus(
-      id: ID!
-      status: OrderStatus!
-    ): Order!
+    # User operations
+    createUser(input: CreateUserInput!): User!
+    updateUser(id: ID!, input: UpdateUserInput!): User!
+    deleteUser(id: ID!): Boolean!
   }
 `;

@@ -487,6 +487,140 @@ export class OrderService {
   }
 
   // ==========================================
+  // UPDATE ORDER
+  // ==========================================
+
+  async updateOrder(
+    orderId: number,
+    updates: { userId?: number },
+  ): Promise<Order> {
+    // ----------------------------------------
+    // Validate order ID
+    // ----------------------------------------
+
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      throw new Error("Invalid order ID");
+    }
+
+    // ----------------------------------------
+    // Get order
+    // ----------------------------------------
+
+    const order = await this.getOrder(orderId);
+
+    if (!order) {
+      throw new Error(`Order ${orderId} not found`);
+    }
+
+    // ----------------------------------------
+    // Prevent updating cancelled orders
+    // ----------------------------------------
+
+    if (order.status === OrderStatus.CANCELLED) {
+      throw new Error("Cancelled order cannot be updated");
+    }
+
+    // ----------------------------------------
+    // Apply updates
+    // ----------------------------------------
+
+    let hasChanges = false;
+
+    if (updates.userId !== undefined) {
+      const newUserId = Number(updates.userId);
+
+      if (!Number.isInteger(newUserId) || newUserId <= 0) {
+        throw new Error("Invalid user ID");
+      }
+
+      await this.userService.validateUser(newUserId);
+
+      order.userId = newUserId;
+
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      return order;
+    }
+
+    // ----------------------------------------
+    // Save updated order
+    // ----------------------------------------
+
+    await this.orderRepository.save(order);
+
+    // ----------------------------------------
+    // Return updated order
+    // ----------------------------------------
+
+    const updatedOrder = await this.getOrder(order.id);
+
+    if (!updatedOrder) {
+      throw new Error("Order was updated but could not be retrieved");
+    }
+
+    return updatedOrder;
+  }
+
+  // ==========================================
+  // DELETE ORDER
+  // ==========================================
+
+  async deleteOrder(orderId: number): Promise<boolean> {
+    // ----------------------------------------
+    // Validate order ID
+    // ----------------------------------------
+
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      throw new Error("Invalid order ID");
+    }
+
+    // ----------------------------------------
+    // Get order
+    // ----------------------------------------
+
+    const order = await this.getOrder(orderId);
+
+    if (!order) {
+      throw new Error(`Order ${orderId} not found`);
+    }
+
+    // ----------------------------------------
+    // Release reserved stock
+    // ----------------------------------------
+
+    for (const item of order.items) {
+      try {
+        const result = await releaseStock(item.productId, item.quantity);
+
+        if (!result?.success) {
+          throw new Error(
+            result?.message ||
+              `Unable to release stock for product ${item.productId}`,
+          );
+        }
+      } catch (error: any) {
+        throw new Error(
+          `Failed to release stock for product ${item.productId}: ${
+            error?.message || "Unknown error"
+          }`,
+        );
+      }
+    }
+
+    // ----------------------------------------
+    // Delete order (order items cascade)
+    // ----------------------------------------
+
+    await this.orderRepository.remove(order);
+
+    console.log(`Order ${orderId} deleted successfully`);
+
+    return true;
+  }
+
+  // ==========================================
   // UPDATE ORDER STATUS
   // ==========================================
 

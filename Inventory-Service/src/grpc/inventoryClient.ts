@@ -25,36 +25,19 @@ const client = new inventoryProto.inventory.InventoryService(
   credentials.createInsecure(),
 );
 
-// client.GetInventory(
-//   {
-//     productId: 1,
-//   },
-//   (error: any, response: any) => {
-//     if (error) {
-//       console.error("gRPC Error:", error.message);
-//       return;
-//     }
+client.GetInventory(
+  {
+    productId: 1,
+  },
+  (error: any, response: any) => {
+    if (error) {
+      console.error("gRPC Error:", error.message);
+      return;
+    }
 
-//     console.log("GetInventory Response:", response);
-//   },
-// );
-
-
-// client.CheckStock(
-//   {
-//     productId: 1,
-//     quantity: 5
-//   },
-//   (error: any, response: any) => {
-//     if (error) {
-//       console.error("CheckStock Error:", error);
-//       return;
-//     }
-
-//     console.log("CheckStock Response:", response);
-//   }
-// );
-
+    console.log("GetInventory Response:", response);
+  },
+);
 
 
 client.CheckStock(
