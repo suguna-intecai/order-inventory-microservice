@@ -1,9 +1,22 @@
-export const resolvers = {
-  Query: {
-    getOrder: async (_parent: unknown, args: { id: string }) => {
-      console.log("getOrder:", args.id);
+import { OrderStatus } from "../../entities/order.js";
 
-      return null;
+import { OrderService } from "../../services/orderService.js";
+
+const orderService = new OrderService();
+
+export const resolvers = {
+  // ========================================
+  // QUERY
+  // ========================================
+
+  Query: {
+    getOrder: async (
+      _parent: unknown,
+      args: {
+        id: string;
+      },
+    ) => {
+      return await orderService.getOrder(Number(args.id));
     },
 
     getUserOrders: async (
@@ -14,35 +27,59 @@ export const resolvers = {
         limit?: number;
       },
     ) => {
-      console.log("getUserOrders:", args);
-
-      return {
-        orders: [],
-        page: args.page ?? 1,
-        limit: args.limit ?? 10,
-        total: 0,
-        hasNextPage: false,
-      };
+      return await orderService.getUserOrders(
+        Number(args.userId),
+        args.page ?? 1,
+        args.limit ?? 10,
+      );
     },
   },
 
+  // ========================================
+  // MUTATION
+  // ========================================
+
   Mutation: {
-    createOrder: async (_parent: unknown, args: unknown) => {
-      console.log("createOrder:", args);
+    createOrder: async (
+      _parent: unknown,
+      args: {
+        input: {
+          userId: string;
+          items: {
+            productId: string;
+            quantity: number;
+          }[];
+        };
+      },
+    ) => {
+      return await orderService.createOrder({
+        userId: Number(args.input.userId),
 
-      throw new Error("createOrder is not implemented yet");
+        items: args.input.items.map((item) => ({
+          productId: Number(item.productId),
+
+          quantity: Number(item.quantity),
+        })),
+      });
     },
 
-    cancelOrder: async (_parent: unknown, args: { id: string }) => {
-      console.log("cancelOrder:", args.id);
-
-      throw new Error("cancelOrder is not implemented yet");
+    cancelOrder: async (
+      _parent: unknown,
+      args: {
+        id: string;
+      },
+    ) => {
+      return await orderService.cancelOrder(Number(args.id));
     },
 
-    updateOrderStatus: async (_parent: unknown, args: unknown) => {
-      console.log("updateOrderStatus:", args);
-
-      throw new Error("updateOrderStatus is not implemented yet");
+    updateOrderStatus: async (
+      _parent: unknown,
+      args: {
+        id: string;
+        status: OrderStatus;
+      },
+    ) => {
+      return await orderService.updateOrderStatus(Number(args.id), args.status);
     },
   },
 };
