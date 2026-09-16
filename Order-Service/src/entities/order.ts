@@ -37,7 +37,7 @@ export class Order {
   })
   status!: OrderStatus;
 
-    @Column({
+  @Column({
     type: "numeric",
     precision: 10,
     scale: 2,

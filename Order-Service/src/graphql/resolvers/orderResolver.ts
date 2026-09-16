@@ -18,6 +18,20 @@ const userService = new UserService();
 
 export const resolvers = {
   // ========================================
+  // ORDER FIELDS
+  // ========================================
+
+  Order: {
+    quantity: (parent: any) =>
+      Array.isArray(parent.items)
+        ? parent.items.reduce(
+            (sum: number, item: any) => sum + Number(item.quantity),
+            0,
+          )
+        : 0,
+  },
+
+  // ========================================
   // QUERY
   // ========================================
 

@@ -558,44 +558,58 @@ export class OrderService {
   // UPDATE ORDER
   // ==========================================
 
-async updateOrder(
-  id: number,
-  updates: {
-    userId?: number;
-    status?: OrderStatus;
-    price?: number;
-  },
-) {
-  const order = await this.orderRepository.findOne({
-    where: { id },
-  });
-
-  if (!order) {
-    throw new Error("Order not found");
-  }
-
-  if (updates.userId !== undefined) {
-    order.userId = updates.userId;
-  }
-
-  if (updates.status !== undefined) {
-    order.status = updates.status;
-  }
-
-  if (updates.price !== undefined) {
-    order.price = updates.price;
-  }
-
-  await this.orderRepository.save(order);
-
-  // Get the updated order again from database
-  return await this.orderRepository.findOne({
-    where: { id },
-    relations: {
-      items: true,
+  async updateOrder(
+    id: number,
+    updates: {
+      userId?: number;
+      status?: OrderStatus;
+      price?: number;
+      quantity?: number;
     },
-  });
-}
+  ) {
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      relations: {
+        items: true,
+      },
+    });
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    if (updates.userId !== undefined) {
+      order.userId = updates.userId;
+    }
+
+    if (updates.status !== undefined) {
+      order.status = updates.status;
+    }
+
+    if (updates.price !== undefined) {
+      order.price = updates.price;
+    }
+
+    if (updates.quantity !== undefined) {
+      const firstItem = order.items[0];
+
+      if (!firstItem) {
+        throw new Error("Order items not found");
+      }
+
+      firstItem.quantity = updates.quantity;
+    }
+
+    await this.orderRepository.save(order);
+
+    // Get the updated order again from database
+    return await this.orderRepository.findOne({
+      where: { id },
+      relations: {
+        items: true,
+      },
+    });
+  }
 
   // ==========================================
   // DELETE ORDER

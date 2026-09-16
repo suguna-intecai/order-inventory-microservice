@@ -33,6 +33,7 @@ export const typeDefs = `#graphql
     userId: ID!
     status: OrderStatus!
     price: Float!
+    quantity: Int!
     items: [OrderItem!]!
     createdAt: String!
     updatedAt: String!

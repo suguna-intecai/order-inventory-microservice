@@ -14,10 +14,26 @@ const startServer = async () => {
 
     const app = await createApp();
 
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`Order Service running on port ${PORT}`);
 
       console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);
+    });
+
+    server.on("error", (error: NodeJS.ErrnoException) => {
+      if (error.code === "EADDRINUSE") {
+        console.error(`Port ${PORT} is already in use.`);
+
+        console.error(
+          "Another Order Service instance may already be running.",
+        );
+
+        process.exit(1);
+      }
+
+      console.error("Order Service server error:", error);
+
+      process.exit(1);
     });
   } catch (error) {
     console.error("Order Service failed to start:", error);
