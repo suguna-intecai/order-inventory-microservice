@@ -4,6 +4,7 @@ export const typeDefs = `#graphql
     PENDING
     CONFIRMED
     CANCELLED
+    COMPLETED
   }
 
   type User {
@@ -31,6 +32,7 @@ export const typeDefs = `#graphql
     id: ID!
     userId: ID!
     status: OrderStatus!
+    price: Float!
     items: [OrderItem!]!
     createdAt: String!
     updatedAt: String!
@@ -46,9 +48,12 @@ export const typeDefs = `#graphql
     items: [CreateOrderItemInput!]!
   }
 
-  input UpdateOrderInput {
-    userId: ID
-  }
+ input UpdateOrderInput {
+  userId: ID
+  quantity: Int
+  status: OrderStatus
+  price: Float
+}
 
   input CreateUserInput {
     name: String!
@@ -88,6 +93,10 @@ export const typeDefs = `#graphql
 
   type Query {
     getOrder(id: ID!): Order
+    getOrders(
+      page: Int
+      limit: Int
+    ): OrderConnection!
     getOrderItems(orderId: ID!): [OrderItem!]!
     getUserOrders(
       userId: ID!

@@ -31,6 +31,16 @@ export const resolvers = {
       return await orderService.getOrder(Number(args.id));
     },
 
+    getOrders: async (
+      _parent: unknown,
+      args: {
+        page?: number;
+        limit?: number;
+      },
+    ) => {
+      return await orderService.listOrders(args.page ?? 1, args.limit ?? 10);
+    },
+
     getOrderItems: async (
       _parent: unknown,
       args: {
@@ -118,13 +128,33 @@ export const resolvers = {
         id: string;
         input: {
           userId?: string;
+          status?: OrderStatus;
+          price?: number;
+          quantity?: number;
         };
       },
     ) => {
-      const updates: { userId?: number } = {};
+      const updates: {
+        userId?: number;
+        status?: OrderStatus;
+        price?: number;
+        quantity?: number;
+      } = {};
 
       if (args.input.userId !== undefined) {
         updates.userId = Number(args.input.userId);
+      }
+
+      if (args.input.status !== undefined) {
+        updates.status = args.input.status;
+      }
+
+      if (args.input.price !== undefined) {
+        updates.price = Number(args.input.price);
+      }
+
+      if (args.input.quantity !== undefined) {
+        updates.quantity = Number(args.input.quantity);
       }
 
       return await orderService.updateOrder(Number(args.id), updates);

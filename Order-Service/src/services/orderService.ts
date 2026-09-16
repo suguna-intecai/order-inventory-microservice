@@ -505,81 +505,97 @@ export class OrderService {
   }
 
   // ==========================================
+  // GET ALL ORDERS
+  // ==========================================
+
+  async listOrders(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<GetUserOrdersResult> {
+    page = Number(page);
+    limit = Number(limit);
+
+    if (!Number.isInteger(page) || page < 1) {
+      page = 1;
+    }
+
+    if (!Number.isInteger(limit) || limit < 1) {
+      limit = 10;
+    }
+
+    if (limit > 100) {
+      limit = 100;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [orders, total] = await this.orderRepository.findAndCount({
+      relations: {
+        items: true,
+      },
+
+      order: {
+        createdAt: "DESC",
+      },
+
+      skip,
+
+      take: limit,
+    });
+
+    const hasNextPage = skip + orders.length < total;
+
+    return {
+      orders,
+      page,
+      limit,
+      total,
+      hasNextPage,
+    };
+  }
+
+  // ==========================================
   // UPDATE ORDER
   // ==========================================
 
-  async updateOrder(
-    orderId: number,
-    updates: { userId?: number },
-  ): Promise<Order> {
-    // ----------------------------------------
-    // Validate order ID
-    // ----------------------------------------
+async updateOrder(
+  id: number,
+  updates: {
+    userId?: number;
+    status?: OrderStatus;
+    price?: number;
+  },
+) {
+  const order = await this.orderRepository.findOne({
+    where: { id },
+  });
 
-    if (!Number.isInteger(orderId) || orderId <= 0) {
-      throw new Error("Invalid order ID");
-    }
-
-    // ----------------------------------------
-    // Get order
-    // ----------------------------------------
-
-    const order = await this.getOrder(orderId);
-
-    if (!order) {
-      throw new Error(`Order ${orderId} not found`);
-    }
-
-    // ----------------------------------------
-    // Prevent updating cancelled orders
-    // ----------------------------------------
-
-    if (order.status === OrderStatus.CANCELLED) {
-      throw new Error("Cancelled order cannot be updated");
-    }
-
-    // ----------------------------------------
-    // Apply updates
-    // ----------------------------------------
-
-    let hasChanges = false;
-
-    if (updates.userId !== undefined) {
-      const newUserId = Number(updates.userId);
-
-      if (!Number.isInteger(newUserId) || newUserId <= 0) {
-        throw new Error("Invalid user ID");
-      }
-
-      await this.userService.validateUser(newUserId);
-
-      order.userId = newUserId;
-
-      hasChanges = true;
-    }
-
-    if (!hasChanges) {
-      return order;
-    }
-
-    // ----------------------------------------
-    // Save updated order
-    // ----------------------------------------
-
-    await this.orderRepository.save(order);
-
-    // ----------------------------------------
-    // Return updated order
-    // ----------------------------------------
-
-    const updatedOrder = await this.getOrder(order.id);
-
-    if (!updatedOrder) {
-      throw new Error("Order was updated but could not be retrieved");
-    }
-
-    return updatedOrder;
+  if (!order) {
+    throw new Error("Order not found");
   }
+
+  if (updates.userId !== undefined) {
+    order.userId = updates.userId;
+  }
+
+  if (updates.status !== undefined) {
+    order.status = updates.status;
+  }
+
+  if (updates.price !== undefined) {
+    order.price = updates.price;
+  }
+
+  await this.orderRepository.save(order);
+
+  // Get the updated order again from database
+  return await this.orderRepository.findOne({
+    where: { id },
+    relations: {
+      items: true,
+    },
+  });
+}
 
   // ==========================================
   // DELETE ORDER

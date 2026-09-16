@@ -37,6 +37,14 @@ export class Order {
   })
   status!: OrderStatus;
 
+    @Column({
+    type: "numeric",
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
+  price!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 
