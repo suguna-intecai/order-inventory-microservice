@@ -404,6 +404,24 @@ export class OrderService {
   }
 
   // ==========================================
+  // GET ORDER ITEMS
+  // ==========================================
+
+  async getOrderItems(orderId: number): Promise<OrderItem[]> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      throw new Error("Invalid order ID");
+    }
+
+    const order = await this.getOrder(orderId);
+
+    if (!order) {
+      throw new Error(`Order ${orderId} not found`);
+    }
+
+    return order.items;
+  }
+
+  // ==========================================
   // GET USER ORDERS
   // ==========================================
 

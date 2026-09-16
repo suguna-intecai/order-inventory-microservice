@@ -4,6 +4,14 @@ import { OrderService } from "../../services/orderService.js";
 
 import { UserService } from "../../services/userService.js";
 
+import {
+  createProduct,
+  getProduct,
+  listProducts,
+  updateProduct,
+  deleteProduct,
+} from "../../grpc/inventoryClient.js";
+
 const orderService = new OrderService();
 
 const userService = new UserService();
@@ -21,6 +29,15 @@ export const resolvers = {
       },
     ) => {
       return await orderService.getOrder(Number(args.id));
+    },
+
+    getOrderItems: async (
+      _parent: unknown,
+      args: {
+        orderId: string;
+      },
+    ) => {
+      return await orderService.getOrderItems(Number(args.orderId));
     },
 
     getUserOrders: async (
@@ -45,6 +62,25 @@ export const resolvers = {
       },
     ) => {
       return await userService.getUserById(Number(args.id));
+    },
+
+    getProduct: async (
+      _parent: unknown,
+      args: {
+        id: string;
+      },
+    ) => {
+      return await getProduct(Number(args.id));
+    },
+
+    products: async (
+      _parent: unknown,
+      args: {
+        page?: number;
+        limit?: number;
+      },
+    ) => {
+      return await listProducts(args.page ?? 1, args.limit ?? 10);
     },
   },
 
@@ -164,6 +200,58 @@ export const resolvers = {
       },
     ) => {
       return await userService.deleteUser(Number(args.id));
+    },
+
+    createProduct: async (
+      _parent: unknown,
+      args: {
+        input: {
+          name: string;
+          isActive?: boolean;
+        };
+      },
+    ) => {
+      const input: { name: string; isActive?: boolean } = {
+        name: args.input.name,
+      };
+
+      if (args.input.isActive !== undefined) {
+        input.isActive = args.input.isActive;
+      }
+
+      return await createProduct(input);
+    },
+
+    updateProduct: async (
+      _parent: unknown,
+      args: {
+        id: string;
+        input: {
+          name?: string;
+          isActive?: boolean;
+        };
+      },
+    ) => {
+      const updates: { name?: string; isActive?: boolean } = {};
+
+      if (args.input.name !== undefined) {
+        updates.name = args.input.name;
+      }
+
+      if (args.input.isActive !== undefined) {
+        updates.isActive = args.input.isActive;
+      }
+
+      return await updateProduct(Number(args.id), updates);
+    },
+
+    deleteProduct: async (
+      _parent: unknown,
+      args: {
+        id: string;
+      },
+    ) => {
+      return await deleteProduct(Number(args.id));
     },
   },
 };

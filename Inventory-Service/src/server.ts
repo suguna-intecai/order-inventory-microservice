@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import "dotenv/config";
 
-import app from "./app.js";
+import { createApp } from "./app.js";
 import { AppDataSource } from "./config/database.js";
 import { startGrpcServer } from "./grpc/inventoryGrpc.js";
 
@@ -13,8 +13,12 @@ const startServer = async () => {
 
     console.log("PostgreSQL connected successfully");
 
+    const app = await createApp();
+
     app.listen(PORT, () => {
       console.log(`HTTP server running on port ${PORT}`);
+
+      console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);
     });
 
     startGrpcServer();

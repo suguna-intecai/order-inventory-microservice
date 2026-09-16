@@ -39,28 +39,22 @@ client.GetInventory(
   },
 );
 
-
 client.CheckStock(
   {
     productId: 1,
-    quantity: 3
+    quantity: 3,
   },
   (error: any, response: any) => {
-
     if (error) {
-      console.error(
-        "CheckStock Error:",
-        error.message
-      );
+      console.error("CheckStock Error:", error.message);
       return;
     }
 
     console.log("\n===== CHECK STOCK =====");
 
     console.log(response);
-  }
+  },
 );
-
 
 // ========================================
 // 2. RESERVE STOCK
@@ -69,24 +63,19 @@ client.CheckStock(
 client.ReserveStock(
   {
     productId: 1,
-    quantity: 2
+    quantity: 2,
   },
   (error: any, response: any) => {
-
     if (error) {
-      console.error(
-        "ReserveStock Error:",
-        error.message
-      );
+      console.error("ReserveStock Error:", error.message);
       return;
     }
 
     console.log("\n===== RESERVE STOCK =====");
 
     console.log(response);
-  }
+  },
 );
-
 
 // ========================================
 // 3. RELEASE STOCK
@@ -95,36 +84,28 @@ client.ReserveStock(
 client.ReleaseStock(
   {
     productId: 1,
-    quantity: 1
+    quantity: 1,
   },
   (error: any, response: any) => {
-
     if (error) {
-      console.error(
-        "ReleaseStock Error:",
-        error.message
-      );
+      console.error("ReleaseStock Error:", error.message);
       return;
     }
 
     console.log("\n===== RELEASE STOCK =====");
 
     console.log(response);
-  }
+  },
 );
-
 
 client.ReserveStock(
   {
     productId: 1,
-    quantity: 10
+    quantity: 10,
   },
   (error: any, response: any) => {
-
     if (error) {
-      console.error(
-        "ReserveStock Error:"
-      );
+      console.error("ReserveStock Error:");
 
       console.error(error.message);
 
@@ -132,5 +113,5 @@ client.ReserveStock(
     }
 
     console.log(response);
-  }
+  },
 );

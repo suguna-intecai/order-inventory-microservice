@@ -1,7 +1,4 @@
-import {
-  credentials,
-  loadPackageDefinition,
-} from "@grpc/grpc-js";
+import { credentials, loadPackageDefinition } from "@grpc/grpc-js";
 
 import { loadSync } from "@grpc/proto-loader";
 
@@ -21,22 +18,16 @@ const packageDefinition = loadSync(protoPath, {
   oneofs: true,
 });
 
-const inventoryProto = loadPackageDefinition(
-  packageDefinition
-) as any;
+const inventoryProto = loadPackageDefinition(packageDefinition) as any;
 
 const client = new inventoryProto.inventory.InventoryService(
   "localhost:50051",
-  credentials.createInsecure()
+  credentials.createInsecure(),
 );
-
 
 // RESERVE STOCK FUNCTION
 
-const reserveStock = (
-  productId: number,
-  quantity: number
-): Promise<any> => {
+const reserveStock = (productId: number, quantity: number): Promise<any> => {
   return new Promise((resolve, reject) => {
     client.ReserveStock(
       {
@@ -50,12 +41,10 @@ const reserveStock = (
         }
 
         resolve(response);
-      }
+      },
     );
   });
 };
-
-
 
 const runConcurrencyTest = async () => {
   console.log("CONCURRENCY TEST");
@@ -65,24 +54,17 @@ const runConcurrencyTest = async () => {
   console.log("Customer B wants: 7");
   console.log("Total requested: 14");
 
-  console.log(
-    "Both requests are being sent at the SAME TIME"
-  );
+  console.log("Both requests are being sent at the SAME TIME");
 
   // Send both requests at the same time
   const requestA = reserveStock(1, 7);
   const requestB = reserveStock(1, 7);
 
-  const results = await Promise.allSettled([
-    requestA,
-    requestB,
-  ]);
-
+  const results = await Promise.allSettled([requestA, requestB]);
 
   console.log("RESULTS");
   results.forEach((result, index) => {
-    const customer =
-      index === 0 ? "Customer A" : "Customer B";
+    const customer = index === 0 ? "Customer A" : "Customer B";
 
     if (result.status === "fulfilled") {
       console.log(`${customer} SUCCESS`);
@@ -99,7 +81,6 @@ const runConcurrencyTest = async () => {
     }
   });
 
- 
   console.log(" EXPECTED RESULT");
   console.log("✓ One customer should succeed");
   console.log("✓ One customer should fail");

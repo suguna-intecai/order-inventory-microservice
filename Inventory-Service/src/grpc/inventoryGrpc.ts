@@ -14,6 +14,14 @@ import {
   releaseStock,
 } from "../controllers/inventoryController.js";
 
+import {
+  createProduct,
+  getProduct,
+  listProducts,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -37,6 +45,11 @@ export const startGrpcServer = () => {
     CheckStock: checkStock,
     ReserveStock: reserveStock,
     ReleaseStock: releaseStock,
+    CreateProduct: createProduct,
+    GetProduct: getProduct,
+    ListProducts: listProducts,
+    UpdateProduct: updateProduct,
+    DeleteProduct: deleteProduct,
   });
 
   const port = process.env.GRPC_PORT || "50051";

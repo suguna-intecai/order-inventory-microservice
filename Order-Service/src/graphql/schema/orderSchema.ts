@@ -1,5 +1,3 @@
-
-
 export const typeDefs = `#graphql
 
   enum OrderStatus {
@@ -12,6 +10,14 @@ export const typeDefs = `#graphql
     id: ID!
     name: String!
     email: String!
+  }
+
+  type Product {
+    id: ID!
+    name: String!
+    isActive: Boolean!
+    createdAt: String!
+    updatedAt: String!
   }
 
   type OrderItem {
@@ -54,6 +60,24 @@ export const typeDefs = `#graphql
     email: String
   }
 
+  input CreateProductInput {
+    name: String!
+    isActive: Boolean
+  }
+
+  input UpdateProductInput {
+    name: String
+    isActive: Boolean
+  }
+
+  type ProductConnection {
+    products: [Product!]!
+    page: Int!
+    limit: Int!
+    total: Int!
+    hasNextPage: Boolean!
+  }
+
   type OrderConnection {
     orders: [Order!]!
     page: Int!
@@ -64,6 +88,7 @@ export const typeDefs = `#graphql
 
   type Query {
     getOrder(id: ID!): Order
+    getOrderItems(orderId: ID!): [OrderItem!]!
     getUserOrders(
       userId: ID!
       page: Int
@@ -71,6 +96,12 @@ export const typeDefs = `#graphql
     ): OrderConnection!
 
     getUser(id: ID!): User
+
+    getProduct(id: ID!): Product
+    products(
+      page: Int
+      limit: Int
+    ): ProductConnection!
   }
 
   type Mutation {
@@ -86,5 +117,10 @@ export const typeDefs = `#graphql
     createUser(input: CreateUserInput!): User!
     updateUser(id: ID!, input: UpdateUserInput!): User!
     deleteUser(id: ID!): Boolean!
+
+    # Product operations
+    createProduct(input: CreateProductInput!): Product!
+    updateProduct(id: ID!, input: UpdateProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
   }
 `;

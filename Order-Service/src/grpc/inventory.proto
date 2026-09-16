@@ -27,6 +27,36 @@ service InventoryService {
   ) returns (
     ReleaseStockResponse
   );
+
+  rpc CreateProduct(
+    CreateProductRequest
+  ) returns (
+    CreateProductResponse
+  );
+
+  rpc GetProduct(
+    GetProductRequest
+  ) returns (
+    GetProductResponse
+  );
+
+  rpc ListProducts(
+    ListProductsRequest
+  ) returns (
+    ListProductsResponse
+  );
+
+  rpc UpdateProduct(
+    UpdateProductRequest
+  ) returns (
+    UpdateProductResponse
+  );
+
+  rpc DeleteProduct(
+    DeleteProductRequest
+  ) returns (
+    DeleteProductResponse
+  );
 }
 
 message GetInventoryRequest {
@@ -68,4 +98,60 @@ message ReleaseStockResponse {
   bool success = 1;
   string message = 2;
   int32 quantity = 3;
+}
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  bool isActive = 3;
+  string createdAt = 4;
+  string updatedAt = 5;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  bool isActive = 2;
+}
+
+message CreateProductResponse {
+  Product product = 1;
+}
+
+message GetProductRequest {
+  int32 id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  int32 total = 4;
+  bool hasNextPage = 5;
+}
+
+message UpdateProductRequest {
+  int32 id = 1;
+  optional string name = 2;
+  optional bool isActive = 3;
+}
+
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+message DeleteProductRequest {
+  int32 id = 1;
+}
+
+message DeleteProductResponse {
+  bool success = 1;
 }

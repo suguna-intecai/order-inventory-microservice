@@ -141,3 +141,136 @@ export const releaseStock = (
     );
   });
 };
+
+// ========================================
+// CREATE PRODUCT
+// ========================================
+
+export const createProduct = (input: {
+  name: string;
+  isActive?: boolean;
+}): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    inventoryClient.CreateProduct(
+      {
+        name: input.name,
+
+        ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
+      },
+
+      (error: any, response: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(response?.product ?? null);
+      },
+    );
+  });
+};
+
+// ========================================
+// GET PRODUCT
+// ========================================
+
+export const getProduct = (productId: number): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    inventoryClient.GetProduct(
+      {
+        id: productId,
+      },
+
+      (error: any, response: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(response?.product ?? null);
+      },
+    );
+  });
+};
+
+// ========================================
+// LIST PRODUCTS
+// ========================================
+
+export const listProducts = (page: number, limit: number): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    inventoryClient.ListProducts(
+      {
+        page,
+        limit,
+      },
+
+      (error: any, response: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(response);
+      },
+    );
+  });
+};
+
+// ========================================
+// UPDATE PRODUCT
+// ========================================
+
+export const updateProduct = (
+  productId: number,
+  updates: {
+    name?: string;
+    isActive?: boolean;
+  },
+): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    inventoryClient.UpdateProduct(
+      {
+        id: productId,
+
+        ...(updates.name !== undefined ? { name: updates.name } : {}),
+
+        ...(updates.isActive !== undefined
+          ? { isActive: updates.isActive }
+          : {}),
+      },
+
+      (error: any, response: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(response?.product ?? null);
+      },
+    );
+  });
+};
+
+// ========================================
+// DELETE PRODUCT
+// ========================================
+
+export const deleteProduct = (productId: number): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    inventoryClient.DeleteProduct(
+      {
+        id: productId,
+      },
+
+      (error: any, response: any) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(response?.success ?? false);
+      },
+    );
+  });
+};
