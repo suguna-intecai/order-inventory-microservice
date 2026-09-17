@@ -3,6 +3,7 @@ import "dotenv/config";
 
 import { createApp } from "./app.js";
 import { AppDataSource } from "./config/database.js";
+import { startGrpcServer } from "./grpc/orderGrpc.js";
 
 const PORT = Number(process.env.PORT || 50052);
 
@@ -20,13 +21,13 @@ const startServer = async () => {
       console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);
     });
 
+    startGrpcServer();
+
     server.on("error", (error: NodeJS.ErrnoException) => {
       if (error.code === "EADDRINUSE") {
         console.error(`Port ${PORT} is already in use.`);
 
-        console.error(
-          "Another Order Service instance may already be running.",
-        );
+        console.error("Another Order Service instance may already be running.");
 
         process.exit(1);
       }
